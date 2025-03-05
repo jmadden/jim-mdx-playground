@@ -1,20 +1,74 @@
 ---
 name: Diagram
 ---
-// SimpleTestComponent.jsx
 import React, { useState } from 'react';
 
-export const SimpleTestComponent = () => {
-  const [count, setCount] = useState(0);
+export const InteractiveDiagram = () => {
+  const [tooltip, setTooltip] = useState('');
+  const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
+
+  const handleMouseEnter = (event, info) => {
+    const { clientX, clientY } = event;
+    setTooltip(info);
+    setTooltipPos({ top: clientY + 10, left: clientX + 10 });
+  };
+
+  const handleMouseLeave = () => {
+    setTooltip('');
+  };
+
   return (
-    <div className="p-4 border border-gray-300 rounded">
-      <p className="mb-2">Count: {count}</p>
-      <button
-        className="px-4 py-2 bg-blue-500 text-white rounded"
-        onClick={() => setCount(count + 1)}
+    <div className="relative">
+      <svg
+        viewBox="0 0 300 200"
+        className="w-full h-auto border border-gray-300 rounded"
       >
-        Increase
-      </button>
+        {/* Component A */}
+        <rect
+          x="50"
+          y="50"
+          width="80"
+          height="50"
+          fill="#d1fae5"
+          stroke="#10b981"
+          strokeWidth="2"
+          className="cursor-pointer"
+          onMouseEnter={(e) => handleMouseEnter(e, 'Component A: Handles authentication')}
+          onMouseLeave={handleMouseLeave}
+        />
+        <text x="90" y="80" textAnchor="middle" className="fill-gray-800 text-sm">
+          Component A
+        </text>
+
+        {/* Component B */}
+        <rect
+          x="170"
+          y="50"
+          width="80"
+          height="50"
+          fill="#dbeafe"
+          stroke="#3b82f6"
+          strokeWidth="2"
+          className="cursor-pointer"
+          onMouseEnter={(e) => handleMouseEnter(e, 'Component B: Processes payments')}
+          onMouseLeave={handleMouseLeave}
+        />
+        <text x="210" y="80" textAnchor="middle" className="fill-gray-800 text-sm">
+          Component B
+        </text>
+
+        {/* Connecting line */}
+        <line x1="130" y1="75" x2="170" y2="75" stroke="#6b7280" strokeWidth="2" />
+      </svg>
+
+      {tooltip && (
+        <div
+          style={{ top: tooltipPos.top, left: tooltipPos.left }}
+          className="absolute bg-white border border-gray-300 rounded shadow p-2 text-sm"
+        >
+          {tooltip}
+        </div>
+      )}
     </div>
   );
 };
