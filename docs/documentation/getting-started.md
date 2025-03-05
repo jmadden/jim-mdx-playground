@@ -9,13 +9,7 @@ Welcome to ReadMe! :owlbert:
 
 You're on your way to building an awesome developer hub! Here's some of the things you'll want to check out.
 
-<Diagram header="Getting Started with Custom Components" details="Here are more details on how you can create interactive components using MDX and Tailwind CSS. This extra content is revealed when you click the button." />
 
-<Accordion title="My Accordion Title" icon="fa-info-circle">
-  Lorem ipsum dolor sit amet, **consectetur adipiscing elit.** Ut enim
-  ad minim veniam, quis nostrud exercitation ullamco. Excepteur sint
-  occaecat cupidatat non proident!
-</Accordion>
 
 # 📝 Customize your docs
 
