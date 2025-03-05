@@ -1,0 +1,153 @@
+---
+name: Diagrams
+---
+import React, { useState } from 'react';
+
+export const ComplexDiagram = ({ title }) => {
+  const [selected, setSelected] = useState(null);
+  const [tooltip, setTooltip] = useState('');
+  const [tooltipPos, setTooltipPos] = useState({ top: 0, left: 0 });
+
+  // Update tooltip state and position on mouse enter
+  const handleMouseEnter = (event, info) => {
+    const { clientX, clientY } = event;
+    setTooltip(info);
+    setTooltipPos({ top: clientY + 10, left: clientX + 10 });
+  };
+
+  const handleMouseLeave = () => {
+    setTooltip('');
+  };
+
+  return (
+    <div className="flex justify-center">
+      <div className="relative rounded-md p-6 m-4 max-w-xl shadow-md border border-gray-300">
+        <p className="text-lg font-bold">{title}</p>
+        <svg width="400" height="250" className="mt-4">
+          {/* Box A: Frontend UI */}
+          <rect
+            x="50"
+            y="50"
+            width="80"
+            height="50"
+            fill={selected === 'A' ? '#60a5fa' : '#dbeafe'}
+            stroke="#3b82f6"
+            strokeWidth="2"
+            className="cursor-pointer transition-colors duration-300"
+            onClick={() => setSelected('A')}
+            onMouseEnter={(e) => handleMouseEnter(e, 'Box A: Frontend UI')}
+            onMouseLeave={handleMouseLeave}
+          />
+          <text
+            x="90"
+            y="80"
+            textAnchor="middle"
+            className="fill-gray-800 text-sm"
+          >
+            Box A
+          </text>
+
+          {/* Box B: Backend API */}
+          <rect
+            x="160"
+            y="120"
+            width="80"
+            height="50"
+            fill={selected === 'B' ? '#fca5a5' : '#fecaca'}
+            stroke="#f87171"
+            strokeWidth="2"
+            className="cursor-pointer transition-colors duration-300"
+            onClick={() => setSelected('B')}
+            onMouseEnter={(e) => handleMouseEnter(e, 'Box B: Backend API')}
+            onMouseLeave={handleMouseLeave}
+          />
+          <text
+            x="200"
+            y="150"
+            textAnchor="middle"
+            className="fill-gray-800 text-sm"
+          >
+            Box B
+          </text>
+
+          {/* Box C: Database */}
+          <rect
+            x="270"
+            y="50"
+            width="80"
+            height="50"
+            fill={selected === 'C' ? '#a7f3d0' : '#dcfce7'}
+            stroke="#34d399"
+            strokeWidth="2"
+            className="cursor-pointer transition-colors duration-300"
+            onClick={() => setSelected('C')}
+            onMouseEnter={(e) => handleMouseEnter(e, 'Box C: Database')}
+            onMouseLeave={handleMouseLeave}
+          />
+          <text
+            x="310"
+            y="80"
+            textAnchor="middle"
+            className="fill-gray-800 text-sm"
+          >
+            Box C
+          </text>
+
+          {/* Connecting lines */}
+          <line
+            x1="130"
+            y1="75"
+            x2="160"
+            y2="145"
+            stroke="#6b7280"
+            strokeWidth="2"
+            strokeDasharray="4"
+          />
+          <line
+            x1="240"
+            y1="75"
+            x2="270"
+            y2="75"
+            stroke="#6b7280"
+            strokeWidth="2"
+            strokeDasharray="4"
+          />
+        </svg>
+
+        {/* Tooltip */}
+        {tooltip && (
+          <div
+            style={{ top: tooltipPos.top, left: tooltipPos.left }}
+            className="absolute bg-white border border-gray-300 rounded shadow p-2 text-xs transition-opacity duration-300"
+          >
+            {tooltip}
+          </div>
+        )}
+
+        {/* Details Panel */}
+        {selected && (
+          <div className="mt-4 p-4 bg-gray-50 border border-gray-200 rounded transition-all duration-300">
+            {selected === 'A' && (
+              <p className="text-sm">
+                <strong>Box A (Frontend UI):</strong> This component handles user
+                interactions and displays the interface.
+              </p>
+            )}
+            {selected === 'B' && (
+              <p className="text-sm">
+                <strong>Box B (Backend API):</strong> This service manages business logic and data processing.
+              </p>
+            )}
+            {selected === 'C' && (
+              <p className="text-sm">
+                <strong>Box C (Database):</strong> This component is responsible for storing and retrieving data.
+              </p>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+<ComplexDiagram title="System Architecture Overview" />
