@@ -10,3 +10,7 @@ metadata:
   ad minim veniam, quis nostrud exercitation ullamco. Excepteur sint
   occaecat cupidatat non proident!
 </Accordion>
+
+<br />
+
+<Diagram header="Getting Started with Custom Components" details="Here are more details on how you can create interactive components using MDX and Tailwind CSS. This extra content is revealed when you click the button." />
