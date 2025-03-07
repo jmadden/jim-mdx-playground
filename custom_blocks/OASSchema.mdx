@@ -36,24 +36,18 @@ export const SwaggerUIComponent = ({ specUrl }) => {
       });
     };
 
-    // Load the Swagger UI assets from CDN
     Promise.all([
       loadCSS('https://unpkg.com/swagger-ui-dist/swagger-ui.css'),
-      loadScript('https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js'),
-      loadScript('https://unpkg.com/swagger-ui-dist/swagger-ui-standalone-preset.js')
+      loadScript('https://unpkg.com/swagger-ui-dist/swagger-ui-bundle.js')
     ])
       .then(() => {
-        // Initialize Swagger UI once the assets are loaded, with branding hidden.
         if (window.SwaggerUIBundle && containerRef.current) {
           window.SwaggerUIBundle({
             url: specUrl,
             domNode: containerRef.current,
-            presets: [
-              window.SwaggerUIBundle.presets.apis,
-              window.SwaggerUIStandalonePreset
-            ],
-            layout: "StandaloneLayout",
-            hideTopbar: true, // This hides the Swagger UI top bar (branding)
+            presets: [window.SwaggerUIBundle.presets.apis],
+            layout: "BaseLayout", // Minimal layout removes the explore/search bar.
+            docExpansion: "none" // Optional: collapse sections by default.
           });
         }
       })
