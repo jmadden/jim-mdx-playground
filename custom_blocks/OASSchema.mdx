@@ -7,9 +7,9 @@ export const SwaggerUIComponent = ({ specUrl }) => {
   const containerRef = useRef(null);
 
   useEffect(() => {
-    // Helper to load external JavaScript
-    const loadScript = (src) => {
-      return new Promise((resolve, reject) => {
+    // Helper to load an external script
+    const loadScript = (src) =>
+      new Promise((resolve, reject) => {
         if (document.querySelector(`script[src="${src}"]`)) {
           return resolve();
         }
@@ -19,11 +19,10 @@ export const SwaggerUIComponent = ({ specUrl }) => {
         script.onerror = reject;
         document.body.appendChild(script);
       });
-    };
 
-    // Helper to load external CSS
-    const loadCSS = (href) => {
-      return new Promise((resolve, reject) => {
+    // Helper to load an external CSS file
+    const loadCSS = (href) =>
+      new Promise((resolve, reject) => {
         if (document.querySelector(`link[href="${href}"]`)) {
           return resolve();
         }
@@ -34,7 +33,6 @@ export const SwaggerUIComponent = ({ specUrl }) => {
         link.onerror = reject;
         document.head.appendChild(link);
       });
-    };
 
     Promise.all([
       loadCSS('https://unpkg.com/swagger-ui-dist/swagger-ui.css'),
@@ -46,9 +44,33 @@ export const SwaggerUIComponent = ({ specUrl }) => {
             url: specUrl,
             domNode: containerRef.current,
             presets: [window.SwaggerUIBundle.presets.apis],
-            layout: "BaseLayout", // Minimal layout removes the explore/search bar.
-            docExpansion: "none" // Optional: collapse sections by default.
+            layout: "BaseLayout", // Minimal layout
+            hideTopbar: true,
+            docExpansion: "none" // Collapse operations by default
           });
+
+          // Wait a moment for Swagger UI to render, then inject custom CSS.
+          setTimeout(() => {
+            const style = document.createElement('style');
+            style.innerHTML = `
+              /* Hide the header, info, operations, tags, and try-out buttons */
+              .swagger-ui .topbar,
+              .swagger-ui .info,
+              .swagger-ui .opblock,
+              .swagger-ui .opblock-tag,
+              .swagger-ui .opblock-summary,
+              .swagger-ui .schemes,
+              .swagger-ui .btn,
+              .swagger-ui .is-open {
+                display: none !important;
+              }
+              /* Ensure the models (schemas) section is visible */
+              .swagger-ui .models {
+                display: block !important;
+              }
+            `;
+            document.head.appendChild(style);
+          }, 1000); // Adjust delay if needed
         }
       })
       .catch(error => {
