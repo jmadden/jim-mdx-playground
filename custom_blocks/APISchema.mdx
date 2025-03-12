@@ -37,7 +37,7 @@ export const OpenAPISchemaViewer = () => {
 
   // Fetch the OpenAPI spec on mount.
   useEffect(function() {
-    fetch('https://mydomain.com/project/openapi')
+    fetch('https://developer.n-able.com/n-central/openapi/66e336d43f3d720013710c24')
       .then(function(response) {
         if (!response.ok) {
           throw new Error('HTTP error: ' + response.status);
