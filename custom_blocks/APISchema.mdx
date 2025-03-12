@@ -3,8 +3,8 @@ name: APISchema
 ---
 import React, { useState, useEffect } from 'react';
 
-export const OpenAPISchemaViewer = ({ specUrl }) => {
-  // Collapsible component that listens for global expand/contract commands.
+export const OpenAPISchemaViewer = ({ specUrl, endpointPath, operation }) => {
+  // Collapsible component with dark/light mode and global expand/contract control.
   const Collapsible = ({ title, children, globalExpand }) => {
     const [open, setOpen] = useState(false);
     useEffect(() => {
@@ -26,7 +26,7 @@ export const OpenAPISchemaViewer = ({ specUrl }) => {
     );
   };
 
-  // Recursively render properties with pretty examples and nested collapsible sections.
+  // Recursively render properties.
   const PropertiesViewer = ({ properties, globalExpand }) => {
     if (!properties)
       return <p className="text-gray-500 dark:text-gray-400">No properties defined.</p>;
@@ -76,12 +76,25 @@ export const OpenAPISchemaViewer = ({ specUrl }) => {
         return response.json();
       })
       .then((data) => {
-        const schemaData = data.components?.schemas ?? data.definitions;
+        let schemaData;
+        if (endpointPath && operation) {
+          // Look for the specified endpoint and method.
+          const endpointSpec = data.paths?.[endpointPath]?.[operation.toLowerCase()];
+          // Extract the requestBody schema for application/json (adjust if needed).
+          const reqSchema = endpointSpec?.requestBody?.content?.['application/json']?.schema;
+          if (reqSchema) {
+            // Wrap it in an object so that the viewer can treat it like other schema definitions.
+            schemaData = { [`${operation.toUpperCase()} ${endpointPath}`]: reqSchema };
+          }
+        } else {
+          // Fallback to full spec's components.schemas (or definitions if OAS 2.0).
+          schemaData = data.components?.schemas ?? data.definitions;
+        }
         setSchemas(schemaData);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [specUrl]);
+  }, [specUrl, endpointPath, operation]);
 
   if (loading)
     return <div className="p-4 text-gray-900 dark:text-gray-100">Loading OpenAPI specification...</div>;
@@ -133,4 +146,8 @@ export const OpenAPISchemaViewer = ({ specUrl }) => {
   );
 };
 
-<OpenAPISchemaViewer specUrl="https://mydomain.com/project/openapi" />
+<OpenAPISchemaViewer 
+  specUrl="https://mydomain.com/project/openapi" 
+  endpointPath="/api/devices/{deviceId}/assets/lifecycle-inf" 
+  operation="put" 
+/>
