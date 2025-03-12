@@ -1,14 +1,42 @@
 ---
 name: APISchema
 ---
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 export const OpenAPISchemaViewer = () => {
-  const [schemas, setSchemas] = React.useState(null);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState(null);
+  // Define the nested PropertiesViewer component.
+  function PropertiesViewer(props) {
+    const properties = props.properties;
+    if (!properties) {
+      return <p className="text-gray-500">No properties defined.</p>;
+    }
+    return (
+      <ul className="ml-4 list-disc">
+        {Object.entries(properties).map(function(item) {
+          const propName = item[0];
+          const details = item[1];
+          return (
+            <li key={propName} className="mb-1">
+              <span className="font-semibold">{propName}</span>:{" "}
+              <span className="text-blue-600">{details.type || "object"}</span>
+              {details.description && (
+                <span className="text-gray-600"> - {details.description}</span>
+              )}
+              {details.properties && <PropertiesViewer properties={details.properties} />}
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
 
-  React.useEffect(function() {
+  // State for the schema, loading, and error.
+  const [schemas, setSchemas] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch the OpenAPI spec on mount.
+  useEffect(function() {
     fetch('https://mydomain.com/project/openapi')
       .then(function(response) {
         if (!response.ok) {
@@ -17,7 +45,8 @@ export const OpenAPISchemaViewer = () => {
         return response.json();
       })
       .then(function(data) {
-        var schemaData = (data.components && data.components.schemas)
+        // Extract schema data from components.schemas (OpenAPI 3.x) or definitions (OpenAPI 2.x).
+        const schemaData = (data.components && data.components.schemas)
           ? data.components.schemas
           : data.definitions;
         setSchemas(schemaData);
@@ -30,6 +59,7 @@ export const OpenAPISchemaViewer = () => {
       });
   }, []);
 
+  // Render loading, error, or the schemas.
   if (loading) {
     return (
       <div className="p-4">
@@ -37,7 +67,6 @@ export const OpenAPISchemaViewer = () => {
       </div>
     );
   }
-
   if (error) {
     return (
       <div className="p-4 text-red-600">
@@ -45,7 +74,6 @@ export const OpenAPISchemaViewer = () => {
       </div>
     );
   }
-
   if (!schemas) {
     return (
       <div className="p-4">
@@ -58,8 +86,8 @@ export const OpenAPISchemaViewer = () => {
     <div className="space-y-6">
       <h1 className="text-3xl font-bold mb-4">API Schemas</h1>
       {Object.entries(schemas).map(function(item) {
-        var schemaName = item[0];
-        var schemaData = item[1];
+        const schemaName = item[0];
+        const schemaData = item[1];
         return (
           <div key={schemaName} className="border border-gray-200 p-4 rounded shadow-sm">
             <h2 className="text-2xl font-bold mb-2">{schemaName}</h2>
@@ -68,31 +96,6 @@ export const OpenAPISchemaViewer = () => {
         );
       })}
     </div>
-  );
-};
-
-const PropertiesViewer = function(props) {
-  var properties = props.properties;
-  if (!properties) {
-    return <p className="text-gray-500">No properties defined.</p>;
-  }
-  return (
-    <ul className="ml-4 list-disc">
-      {Object.entries(properties).map(function(item) {
-        var propName = item[0];
-        var details = item[1];
-        return (
-          <li key={propName} className="mb-1">
-            <span className="font-semibold">{propName}</span>:{" "}
-            <span className="text-blue-600">{details.type || "object"}</span>
-            {details.description && (
-              <span className="text-gray-600"> - {details.description}</span>
-            )}
-            {details.properties && <PropertiesViewer properties={details.properties} />}
-          </li>
-        );
-      })}
-    </ul>
   );
 };
 
