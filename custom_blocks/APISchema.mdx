@@ -1,29 +1,33 @@
 ---
 name: APISchema
 ---
+import React from 'react';
+
 export const OpenAPISchemaViewer = () => {
   const [schemas, setSchemas] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
 
-  React.useEffect(() => {
-    async function fetchSpec() {
-      try {
-        const response = await fetch('https://developer.n-able.com/n-central/openapi/66e336d43f3d720013710c24');
+  React.useEffect(function() {
+    fetch('https://developer.n-able.com/n-central/openapi/66e336d43f3d720013710c24')
+      .then(function(response) {
         if (!response.ok) {
           throw new Error('HTTP error: ' + response.status);
         }
-        const data = await response.json();
-        // Use traditional syntax instead of optional chaining
-        const schemaData = (data.components && data.components.schemas) ? data.components.schemas : data.definitions;
+        return response.json();
+      })
+      .then(function(data) {
+        var schemaData = (data.components && data.components.schemas)
+          ? data.components.schemas
+          : data.definitions;
         setSchemas(schemaData);
-      } catch (err) {
+      })
+      .catch(function(err) {
         setError(err.message);
-      } finally {
+      })
+      .finally(function() {
         setLoading(false);
-      }
-    }
-    fetchSpec();
+      });
   }, []);
 
   if (loading) {
@@ -53,33 +57,41 @@ export const OpenAPISchemaViewer = () => {
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold mb-4">API Schemas</h1>
-      {Object.entries(schemas).map(([schemaName, schemaData]) => (
-        <div key={schemaName} className="border border-gray-200 p-4 rounded shadow-sm">
-          <h2 className="text-2xl font-bold mb-2">{schemaName}</h2>
-          <PropertiesViewer properties={schemaData.properties} />
-        </div>
-      ))}
+      {Object.entries(schemas).map(function(item) {
+        var schemaName = item[0];
+        var schemaData = item[1];
+        return (
+          <div key={schemaName} className="border border-gray-200 p-4 rounded shadow-sm">
+            <h2 className="text-2xl font-bold mb-2">{schemaName}</h2>
+            <PropertiesViewer properties={schemaData.properties} />
+          </div>
+        );
+      })}
     </div>
   );
 };
 
-const PropertiesViewer = ({ properties }) => {
+const PropertiesViewer = function(props) {
+  var properties = props.properties;
   if (!properties) {
     return <p className="text-gray-500">No properties defined.</p>;
   }
-
   return (
     <ul className="ml-4 list-disc">
-      {Object.entries(properties).map(([propName, details]) => (
-        <li key={propName} className="mb-1">
-          <span className="font-semibold">{propName}</span>:{" "}
-          <span className="text-blue-600">{details.type || "object"}</span>
-          {details.description && (
-            <span className="text-gray-600"> - {details.description}</span>
-          )}
-          {details.properties && <PropertiesViewer properties={details.properties} />}
-        </li>
-      ))}
+      {Object.entries(properties).map(function(item) {
+        var propName = item[0];
+        var details = item[1];
+        return (
+          <li key={propName} className="mb-1">
+            <span className="font-semibold">{propName}</span>:{" "}
+            <span className="text-blue-600">{details.type || "object"}</span>
+            {details.description && (
+              <span className="text-gray-600"> - {details.description}</span>
+            )}
+            {details.properties && <PropertiesViewer properties={details.properties} />}
+          </li>
+        );
+      })}
     </ul>
   );
 };
