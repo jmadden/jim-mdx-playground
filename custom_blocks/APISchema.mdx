@@ -11,12 +11,11 @@ export const OpenAPISchemaViewer = () => {
       try {
         const response = await fetch('https://developer.n-able.com/n-central/openapi/66e336d43f3d720013710c24');
         if (!response.ok) {
-          throw new Error(`HTTP error: ${response.status}`);
+          throw new Error('HTTP error: ' + response.status);
         }
         const data = await response.json();
-        // For OpenAPI 3.0, the schemas live in components.schemas.
-        // For OpenAPI 2.0, they might be in definitions.
-        const schemaData = data.components?.schemas || data.definitions;
+        // Use traditional syntax instead of optional chaining
+        const schemaData = (data.components && data.components.schemas) ? data.components.schemas : data.definitions;
         setSchemas(schemaData);
       } catch (err) {
         setError(err.message);
@@ -78,7 +77,6 @@ const PropertiesViewer = ({ properties }) => {
           {details.description && (
             <span className="text-gray-600"> - {details.description}</span>
           )}
-          {/* Render nested properties recursively, if they exist */}
           {details.properties && <PropertiesViewer properties={details.properties} />}
         </li>
       ))}
