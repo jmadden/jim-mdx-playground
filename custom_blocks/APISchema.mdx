@@ -4,7 +4,24 @@ name: APISchema
 import React, { useState, useEffect } from 'react';
 
 export const OpenAPISchemaViewer = () => {
-  // Define the nested PropertiesViewer component.
+  // A simple collapsible component.
+  function Collapsible(props) {
+    const [open, setOpen] = useState(true);
+    return (
+      <div className="mb-2 border border-gray-200 rounded">
+        <div 
+          className="cursor-pointer bg-gray-200 px-4 py-2 flex justify-between items-center"
+          onClick={() => setOpen(!open)}
+        >
+          <span className="font-bold">{props.title}</span>
+          <span>{open ? '-' : '+'}</span>
+        </div>
+        {open && <div className="p-4">{props.children}</div>}
+      </div>
+    );
+  }
+
+  // Nested component for rendering properties recursively.
   function PropertiesViewer(props) {
     const properties = props.properties;
     if (!properties) {
@@ -22,7 +39,17 @@ export const OpenAPISchemaViewer = () => {
               {details.description && (
                 <span className="text-gray-600"> - {details.description}</span>
               )}
-              {details.properties && <PropertiesViewer properties={details.properties} />}
+              {details.example !== undefined && (
+                <div className="mt-1 p-2 bg-gray-100 border rounded text-sm">
+                  Example: {JSON.stringify(details.example)}
+                </div>
+              )}
+              {/* If nested properties exist, render them in a collapsible section */}
+              {details.properties && (
+                <Collapsible title="Nested Properties">
+                  <PropertiesViewer properties={details.properties} />
+                </Collapsible>
+              )}
             </li>
           );
         })}
@@ -35,7 +62,7 @@ export const OpenAPISchemaViewer = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Fetch the OpenAPI spec on mount.
+  // Fetch the OpenAPI spec when the component mounts.
   useEffect(function() {
     fetch('https://developer.n-able.com/n-central/openapi/66e336d43f3d720013710c24')
       .then(function(response) {
@@ -45,7 +72,7 @@ export const OpenAPISchemaViewer = () => {
         return response.json();
       })
       .then(function(data) {
-        // Extract schema data from components.schemas (OpenAPI 3.x) or definitions (OpenAPI 2.x).
+        // Extract schema data from components.schemas (OpenAPI 3.x) or definitions (OpenAPI 2.x)
         const schemaData = (data.components && data.components.schemas)
           ? data.components.schemas
           : data.definitions;
@@ -59,7 +86,6 @@ export const OpenAPISchemaViewer = () => {
       });
   }, []);
 
-  // Render loading, error, or the schemas.
   if (loading) {
     return (
       <div className="p-4">
@@ -89,10 +115,17 @@ export const OpenAPISchemaViewer = () => {
         const schemaName = item[0];
         const schemaData = item[1];
         return (
-          <div key={schemaName} className="border border-gray-200 p-4 rounded shadow-sm">
-            <h2 className="text-2xl font-bold mb-2">{schemaName}</h2>
+          <Collapsible key={schemaName} title={schemaName}>
+            {schemaData.description && (
+              <p className="mb-2 text-gray-700">{schemaData.description}</p>
+            )}
+            {schemaData.example !== undefined && (
+              <div className="mt-1 p-2 bg-gray-100 border rounded text-sm">
+                Example: {JSON.stringify(schemaData.example)}
+              </div>
+            )}
             <PropertiesViewer properties={schemaData.properties} />
-          </div>
+          </Collapsible>
         );
       })}
     </div>
