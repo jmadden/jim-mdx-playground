@@ -9,7 +9,7 @@ export const OpenAPISchemaViewer = () => {
   React.useEffect(() => {
     async function fetchSpec() {
       try {
-        const response = await fetch('https://mydomain.com/project/openapi');
+        const response = await fetch('https://developer.n-able.com/n-central/openapi/66e336d43f3d720013710c24');
         if (!response.ok) {
           throw new Error(`HTTP error: ${response.status}`);
         }
