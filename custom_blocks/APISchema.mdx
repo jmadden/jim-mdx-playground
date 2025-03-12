@@ -4,7 +4,7 @@ name: APISchema
 import React, { useState, useEffect } from 'react';
 
 export const OpenAPISchemaViewer = ({ specUrl }) => {
-  // Collapsible component that listens for a global expand/contract command.
+  // Collapsible component that listens for global expand/contract commands.
   const Collapsible = ({ title, children, globalExpand }) => {
     const [open, setOpen] = useState(false);
     useEffect(() => {
@@ -13,36 +13,37 @@ export const OpenAPISchemaViewer = ({ specUrl }) => {
       }
     }, [globalExpand]);
     return (
-      <div className="mb-2 border border-gray-200 rounded">
+      <div className="mb-2 border border-gray-200 dark:border-gray-700 rounded">
         <div
-          className="cursor-pointer bg-gray-200 px-4 py-2 flex justify-between items-center"
+          className="cursor-pointer bg-gray-200 dark:bg-gray-800 px-4 py-2 flex justify-between items-center"
           onClick={() => setOpen(!open)}
         >
-          <span className="font-bold">{title}</span>
-          <span>{open ? '-' : '+'}</span>
+          <span className="font-bold text-gray-900 dark:text-gray-100">{title}</span>
+          <span className="text-gray-900 dark:text-gray-100">{open ? '-' : '+'}</span>
         </div>
-        {open && <div className="p-4">{children}</div>}
+        {open && <div className="p-4 bg-white dark:bg-gray-900">{children}</div>}
       </div>
     );
   };
 
   // Recursively render properties with pretty examples and nested collapsible sections.
   const PropertiesViewer = ({ properties, globalExpand }) => {
-    if (!properties) return <p className="text-gray-500">No properties defined.</p>;
+    if (!properties)
+      return <p className="text-gray-500 dark:text-gray-400">No properties defined.</p>;
     return (
       <ul className="ml-4 list-disc">
         {Object.entries(properties).map(([propName, details]) => (
           <li key={propName} className="mb-1">
-            <span className="font-semibold">{propName}</span>:{" "}
-            <span className="text-blue-600">{details.type || "object"}</span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100">{propName}</span>:{" "}
+            <span className="text-blue-600 dark:text-blue-400">{details.type || "object"}</span>
             {details.description && (
-              <span className="text-gray-600"> - {details.description}</span>
+              <span className="text-gray-600 dark:text-gray-300"> - {details.description}</span>
             )}
             {details.example !== undefined && (
               <div className="mt-1">
-                <span className="font-semibold">Example:</span>
-                <pre 
-                  className="p-2 bg-gray-100 rounded text-sm whitespace-pre-wrap"
+                <span className="font-semibold text-gray-900 dark:text-gray-100">Example:</span>
+                <pre
+                  className="p-2 bg-gray-100 dark:bg-gray-700 rounded text-sm whitespace-pre-wrap"
                   style={{ paddingLeft: "5px" }}
                 >
                   {typeof details.example === 'object'
@@ -62,7 +63,7 @@ export const OpenAPISchemaViewer = ({ specUrl }) => {
     );
   };
 
-  // Local state for the fetched schema, loading, error, and global expand/contract control.
+  // Local state for schema data, loading, error, and global expand/contract control.
   const [schemas, setSchemas] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -82,38 +83,41 @@ export const OpenAPISchemaViewer = ({ specUrl }) => {
       .finally(() => setLoading(false));
   }, [specUrl]);
 
-  if (loading) return <div className="p-4">Loading OpenAPI specification...</div>;
-  if (error) return <div className="p-4 text-red-600">Error loading specification: {error}</div>;
-  if (!schemas) return <div className="p-4">No schema data found in the OpenAPI specification.</div>;
+  if (loading)
+    return <div className="p-4 text-gray-900 dark:text-gray-100">Loading OpenAPI specification...</div>;
+  if (error)
+    return <div className="p-4 text-red-600">Error loading specification: {error}</div>;
+  if (!schemas)
+    return <div className="p-4 text-gray-900 dark:text-gray-100">No schema data found in the OpenAPI specification.</div>;
 
   return (
     <div className="space-y-6">
       {/* Global control buttons */}
       <div className="mb-4 flex space-x-4">
         <button
-          className="px-4 py-2 bg-blue-500 text-white rounded"
+          className="px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded"
           onClick={() => setGlobalExpand(true)}
         >
           Expand All
         </button>
         <button
-          className="px-4 py-2 bg-blue-500 text-white rounded"
+          className="px-4 py-2 bg-blue-500 dark:bg-blue-600 text-white rounded"
           onClick={() => setGlobalExpand(false)}
         >
-          Collaps All
+          Contract All
         </button>
       </div>
-      <h1 className="text-3xl font-bold mb-4">API Schemas</h1>
+      <h1 className="text-3xl font-bold mb-4 text-gray-900 dark:text-gray-100">API Schemas</h1>
       {Object.entries(schemas).map(([schemaName, schemaData]) => (
         <Collapsible key={schemaName} title={schemaName} globalExpand={globalExpand}>
           {schemaData.description && (
-            <p className="mb-2 text-gray-700">{schemaData.description}</p>
+            <p className="mb-2 text-gray-700 dark:text-gray-300">{schemaData.description}</p>
           )}
           {schemaData.example !== undefined && (
             <div className="mt-1">
-              <span className="font-semibold">Example:</span>
-              <pre 
-                className="p-2 bg-gray-100 rounded text-sm whitespace-pre-wrap"
+              <span className="font-semibold text-gray-900 dark:text-gray-100">Example:</span>
+              <pre
+                className="p-2 bg-gray-100 dark:bg-gray-700 rounded text-sm whitespace-pre-wrap"
                 style={{ paddingLeft: "5px" }}
               >
                 {typeof schemaData.example === 'object'
