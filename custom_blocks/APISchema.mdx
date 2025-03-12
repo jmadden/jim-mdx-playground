@@ -42,7 +42,10 @@ export const OpenAPISchemaViewer = () => {
               {details.example !== undefined && (
                 <div className="mt-1">
                   <span className="font-semibold">Example:</span>
-                  <pre className="p-2 pl-[5px] bg-gray-100 rounded text-sm whitespace-pre-wrap">
+                  <pre 
+                    className="p-2 bg-gray-100 rounded text-sm whitespace-pre-wrap"
+                    style={{ paddingLeft: "5px" }}
+                  >
                     {typeof details.example === 'object'
                       ? JSON.stringify(details.example, null, 2)
                       : details.example}
@@ -126,7 +129,10 @@ export const OpenAPISchemaViewer = () => {
             {schemaData.example !== undefined && (
               <div className="mt-1">
                 <span className="font-semibold">Example:</span>
-                <pre className="p-2 pl-[5px] bg-gray-100 rounded text-sm whitespace-pre-wrap">
+                <pre 
+                  className="p-2 bg-gray-100 rounded text-sm whitespace-pre-wrap"
+                  style={{ paddingLeft: "5px" }}
+                >
                   {typeof schemaData.example === 'object'
                     ? JSON.stringify(schemaData.example, null, 2)
                     : schemaData.example}
