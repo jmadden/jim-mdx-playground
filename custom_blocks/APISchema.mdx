@@ -1,8 +1,6 @@
 ---
 name: APISchema
 ---
-import React from 'react';
-
 export const OpenAPISchemaViewer = () => {
   const [schemas, setSchemas] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
@@ -68,31 +66,6 @@ export const OpenAPISchemaViewer = () => {
         );
       })}
     </div>
-  );
-};
-
-const PropertiesViewer = function(props) {
-  var properties = props.properties;
-  if (!properties) {
-    return <p className="text-gray-500">No properties defined.</p>;
-  }
-  return (
-    <ul className="ml-4 list-disc">
-      {Object.entries(properties).map(function(item) {
-        var propName = item[0];
-        var details = item[1];
-        return (
-          <li key={propName} className="mb-1">
-            <span className="font-semibold">{propName}</span>:{" "}
-            <span className="text-blue-600">{details.type || "object"}</span>
-            {details.description && (
-              <span className="text-gray-600"> - {details.description}</span>
-            )}
-            {details.properties && <PropertiesViewer properties={details.properties} />}
-          </li>
-        );
-      })}
-    </ul>
   );
 };
 
