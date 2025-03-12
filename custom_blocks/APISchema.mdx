@@ -4,9 +4,14 @@ name: APISchema
 import React, { useState, useEffect } from 'react';
 
 export const OpenAPISchemaViewer = ({ specUrl }) => {
-  // Collapsible component starting closed.
-  const Collapsible = ({ title, children }) => {
+  // Collapsible component that listens for a global expand/contract command.
+  const Collapsible = ({ title, children, globalExpand }) => {
     const [open, setOpen] = useState(false);
+    useEffect(() => {
+      if (typeof globalExpand === 'boolean') {
+        setOpen(globalExpand);
+      }
+    }, [globalExpand]);
     return (
       <div className="mb-2 border border-gray-200 rounded">
         <div
@@ -21,11 +26,9 @@ export const OpenAPISchemaViewer = ({ specUrl }) => {
     );
   };
 
-  // Recursively render properties.
-  const PropertiesViewer = ({ properties }) => {
-    if (!properties) {
-      return <p className="text-gray-500">No properties defined.</p>;
-    }
+  // Recursively render properties with pretty examples and nested collapsible sections.
+  const PropertiesViewer = ({ properties, globalExpand }) => {
+    if (!properties) return <p className="text-gray-500">No properties defined.</p>;
     return (
       <ul className="ml-4 list-disc">
         {Object.entries(properties).map(([propName, details]) => (
@@ -49,8 +52,8 @@ export const OpenAPISchemaViewer = ({ specUrl }) => {
               </div>
             )}
             {details.properties && (
-              <Collapsible title="Nested Properties">
-                <PropertiesViewer properties={details.properties} />
+              <Collapsible title="Nested Properties" globalExpand={globalExpand}>
+                <PropertiesViewer properties={details.properties} globalExpand={globalExpand} />
               </Collapsible>
             )}
           </li>
@@ -59,17 +62,16 @@ export const OpenAPISchemaViewer = ({ specUrl }) => {
     );
   };
 
-  // State and effect hooks.
+  // Local state for the fetched schema, loading, error, and global expand/contract control.
   const [schemas, setSchemas] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [globalExpand, setGlobalExpand] = useState(false);
 
   useEffect(() => {
     fetch(specUrl)
       .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error: ${response.status}`);
         return response.json();
       })
       .then((data) => {
@@ -80,21 +82,30 @@ export const OpenAPISchemaViewer = ({ specUrl }) => {
       .finally(() => setLoading(false));
   }, [specUrl]);
 
-  if (loading) {
-    return <div className="p-4">Loading OpenAPI specification...</div>;
-  }
-  if (error) {
-    return <div className="p-4 text-red-600">Error loading specification: {error}</div>;
-  }
-  if (!schemas) {
-    return <div className="p-4">No schema data found in the OpenAPI specification.</div>;
-  }
+  if (loading) return <div className="p-4">Loading OpenAPI specification...</div>;
+  if (error) return <div className="p-4 text-red-600">Error loading specification: {error}</div>;
+  if (!schemas) return <div className="p-4">No schema data found in the OpenAPI specification.</div>;
 
   return (
     <div className="space-y-6">
+      {/* Global control buttons */}
+      <div className="mb-4 flex space-x-4">
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded"
+          onClick={() => setGlobalExpand(true)}
+        >
+          Expand All
+        </button>
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded"
+          onClick={() => setGlobalExpand(false)}
+        >
+          Contract All
+        </button>
+      </div>
       <h1 className="text-3xl font-bold mb-4">API Schemas</h1>
       {Object.entries(schemas).map(([schemaName, schemaData]) => (
-        <Collapsible key={schemaName} title={schemaName}>
+        <Collapsible key={schemaName} title={schemaName} globalExpand={globalExpand}>
           {schemaData.description && (
             <p className="mb-2 text-gray-700">{schemaData.description}</p>
           )}
@@ -111,7 +122,7 @@ export const OpenAPISchemaViewer = ({ specUrl }) => {
               </pre>
             </div>
           )}
-          <PropertiesViewer properties={schemaData.properties} />
+          <PropertiesViewer properties={schemaData.properties} globalExpand={globalExpand} />
         </Collapsible>
       ))}
     </div>
