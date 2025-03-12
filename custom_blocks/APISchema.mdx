@@ -1,0 +1,89 @@
+---
+name: APISchema
+---
+export const OpenAPISchemaViewer = () => {
+  const [schemas, setSchemas] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
+
+  React.useEffect(() => {
+    async function fetchSpec() {
+      try {
+        const response = await fetch('https://mydomain.com/project/openapi');
+        if (!response.ok) {
+          throw new Error(`HTTP error: ${response.status}`);
+        }
+        const data = await response.json();
+        // For OpenAPI 3.0, the schemas live in components.schemas.
+        // For OpenAPI 2.0, they might be in definitions.
+        const schemaData = data.components?.schemas || data.definitions;
+        setSchemas(schemaData);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchSpec();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="p-4">
+        Loading OpenAPI specification...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 text-red-600">
+        Error loading specification: {error}
+      </div>
+    );
+  }
+
+  if (!schemas) {
+    return (
+      <div className="p-4">
+        No schema data found in the OpenAPI specification.
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold mb-4">API Schemas</h1>
+      {Object.entries(schemas).map(([schemaName, schemaData]) => (
+        <div key={schemaName} className="border border-gray-200 p-4 rounded shadow-sm">
+          <h2 className="text-2xl font-bold mb-2">{schemaName}</h2>
+          <PropertiesViewer properties={schemaData.properties} />
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const PropertiesViewer = ({ properties }) => {
+  if (!properties) {
+    return <p className="text-gray-500">No properties defined.</p>;
+  }
+
+  return (
+    <ul className="ml-4 list-disc">
+      {Object.entries(properties).map(([propName, details]) => (
+        <li key={propName} className="mb-1">
+          <span className="font-semibold">{propName}</span>:{" "}
+          <span className="text-blue-600">{details.type || "object"}</span>
+          {details.description && (
+            <span className="text-gray-600"> - {details.description}</span>
+          )}
+          {/* Render nested properties recursively, if they exist */}
+          {details.properties && <PropertiesViewer properties={details.properties} />}
+        </li>
+      ))}
+    </ul>
+  );
+};
+
+<OpenAPISchemaViewer />
