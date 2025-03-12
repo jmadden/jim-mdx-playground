@@ -3,7 +3,7 @@ name: APISchema
 ---
 import React, { useState, useEffect } from 'react';
 
-export const OpenAPISchemaViewer = () => {
+export const OpenAPISchemaViewer = ({ specUrl }) => {
   // A simple collapsible component that starts closed.
   function Collapsible(props) {
     const [open, setOpen] = useState(false); // Start closed
@@ -71,7 +71,7 @@ export const OpenAPISchemaViewer = () => {
 
   // Fetch the OpenAPI spec when the component mounts.
   useEffect(function() {
-    fetch('https://developer.n-able.com/n-central/openapi/66e336d43f3d720013710c24')
+    fetch(specUrl)
       .then(function(response) {
         if (!response.ok) {
           throw new Error('HTTP error: ' + response.status);
@@ -91,7 +91,7 @@ export const OpenAPISchemaViewer = () => {
       .finally(function() {
         setLoading(false);
       });
-  }, []);
+  }, [specUrl]);
 
   if (loading) {
     return (
@@ -147,4 +147,4 @@ export const OpenAPISchemaViewer = () => {
   );
 };
 
-<OpenAPISchemaViewer />
+<OpenAPISchemaViewer specUrl="https://mydomain.com/project/openapi" />
