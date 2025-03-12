@@ -4,9 +4,9 @@ name: APISchema
 import React, { useState, useEffect } from 'react';
 
 export const OpenAPISchemaViewer = () => {
-  // A simple collapsible component.
+  // A simple collapsible component that starts closed.
   function Collapsible(props) {
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false); // Start closed
     return (
       <div className="mb-2 border border-gray-200 rounded">
         <div 
@@ -40,11 +40,15 @@ export const OpenAPISchemaViewer = () => {
                 <span className="text-gray-600"> - {details.description}</span>
               )}
               {details.example !== undefined && (
-                <div className="mt-1 p-2 bg-gray-100 border rounded text-sm">
-                  Example: {JSON.stringify(details.example)}
+                <div className="mt-1">
+                  <span className="font-semibold">Example:</span>
+                  <pre className="p-2 bg-gray-100 border rounded text-sm whitespace-pre-wrap">
+                    {typeof details.example === 'object'
+                      ? JSON.stringify(details.example, null, 2)
+                      : details.example}
+                  </pre>
                 </div>
               )}
-              {/* If nested properties exist, render them in a collapsible section */}
               {details.properties && (
                 <Collapsible title="Nested Properties">
                   <PropertiesViewer properties={details.properties} />
@@ -120,8 +124,13 @@ export const OpenAPISchemaViewer = () => {
               <p className="mb-2 text-gray-700">{schemaData.description}</p>
             )}
             {schemaData.example !== undefined && (
-              <div className="mt-1 p-2 bg-gray-100 border rounded text-sm">
-                Example: {JSON.stringify(schemaData.example)}
+              <div className="mt-1">
+                <span className="font-semibold">Example:</span>
+                <pre className="p-2 bg-gray-100 border rounded text-sm whitespace-pre-wrap">
+                  {typeof schemaData.example === 'object'
+                    ? JSON.stringify(schemaData.example, null, 2)
+                    : schemaData.example}
+                </pre>
               </div>
             )}
             <PropertiesViewer properties={schemaData.properties} />
