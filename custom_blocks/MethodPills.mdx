@@ -3,10 +3,10 @@ name: MethodPills
 ---
 export const MethodPill = ({ type, bg, color, radius }) => {
   const defaultColors = {
-    POST: { bg: '#ef4444', color: '#ffffff' },   // red-500
-    GET: { bg: '#22c55e', color: '#ffffff' },    // green-500
-    PATCH: { bg: '#facc15', color: '#000000' },  // yellow-400
-    DELETE: { bg: '#f97316', color: '#ffffff' }, // orange-500
+    POST: { bg: '#0d9b71', color: '#ffffff' },   // ReadMe blue
+    GET: { bg: '#0d9b71', color: '#ffffff' },    // ReadMe green
+    PUT: { bg: '#c61c29', color: '#000000' },  // ReadMe purple
+    DELETE: { bg: '#c61c29', color: '#ffffff' }, // ReadMe red
   };
 
   const resolvedColors = defaultColors[type?.toUpperCase()] || {
