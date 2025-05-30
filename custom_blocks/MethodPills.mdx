@@ -1,7 +1,7 @@
 ---
 name: MethodPills
 ---
-export const MethodPill = ({ type, bg, color }) => {
+export const MethodPill = ({ type, bg, color, radius }) => {
   const defaultColors = {
     POST: { bg: '#ef4444', color: '#ffffff' },   // red-500
     GET: { bg: '#22c55e', color: '#ffffff' },    // green-500
@@ -9,21 +9,28 @@ export const MethodPill = ({ type, bg, color }) => {
     DELETE: { bg: '#f97316', color: '#ffffff' }, // orange-500
   };
 
+  const resolvedColors = defaultColors[type?.toUpperCase()] || {
+    bg: '#e5e7eb',    // gray-200
+    color: '#000000', // black
+  };
+
   const style = {
-    backgroundColor: bg || defaultColors[type]?.bg || '#e5e7eb', // fallback: gray-200
-    color: color || defaultColors[type]?.color || '#000000',     // fallback: black
+    backgroundColor: bg || resolvedColors.bg,
+    color: color || resolvedColors.color,
+    borderRadius: radius || '9999px', // fully rounded pill by default
   };
 
   return (
     <span
       style={style}
-      className="inline-block px-2 py-1 rounded-full text-xs font-bold font-mono"
+      className="inline-block px-2 py-1 text-xs font-bold font-mono"
     >
       {type}
     </span>
   );
 };
 
-<MethodPill type="POST" /> and <MethodPill type="GET" />
-<MethodPill type="SYNC" bg="#8b5cf6" color="#fff" />
-<MethodPill type="FETCH" bg="#0ea5e9" color="#000" />
+<MethodPill type="POST" />
+<MethodPill type="SYNC" bg="#8b5cf6" color="#ffffff" />
+<MethodPill type="GET" radius="6px" />
+<MethodPill type="MAGIC" bg="#333" color="#fff" radius="0.5rem" />
