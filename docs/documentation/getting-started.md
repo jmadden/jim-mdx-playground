@@ -51,5 +51,3 @@ Completely custom: <MethodPill type="MAGIC" bg="#fffb00" color="#000" radius="0.
 <br />
 
 This will require you to make a <MethodPill type="POST" />
-
-<MethodPill type="POST" />
