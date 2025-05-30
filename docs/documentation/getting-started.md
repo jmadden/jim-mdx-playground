@@ -60,4 +60,4 @@ Custom roundness: <MethodPill type="GET" radius="6px" />
 
 Completely custom: <MethodPill type="MAGIC" bg="#fffb00" color="#000" radius="0.5rem" />
 
-<MethodPill type="POST" bg="hex color (optionsl)" color="hex color (optional)" radius="px value here (optional)" />
+<MethodPill type="POST" />
