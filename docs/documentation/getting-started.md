@@ -47,3 +47,9 @@ Custom background & text: <MethodPill type="SYNC" bg="#8b5cf6" color="#ffffff" /
 Custom roundness: <MethodPill type="GET" radius="6px" />
 
 Completely custom: <MethodPill type="MAGIC" bg="#fffb00" color="#000" radius="0.5rem" />
+
+<br />
+
+This will require you to make a
+
+<MethodPill type="POST" />
