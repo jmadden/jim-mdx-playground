@@ -1,19 +1,25 @@
 ---
 name: MethodPills
 ---
-export const MethodPill = ({ type }) => {
-  const colors = {
-    POST: 'bg-red-500 text-white',
-    GET: 'bg-green-500 text-white',
-    PATCH: 'bg-yellow-400 text-black',
-    DELETE: 'bg-orange-500 text-white',
+export const MethodPill = ({ type, bg, color }) => {
+  const defaultColors = {
+    POST: { bg: '#ef4444', color: '#ffffff' },   // red-500
+    GET: { bg: '#22c55e', color: '#ffffff' },    // green-500
+    PATCH: { bg: '#facc15', color: '#000000' },  // yellow-400
+    DELETE: { bg: '#f97316', color: '#ffffff' }, // orange-500
+  };
+
+  const style = {
+    backgroundColor: bg || defaultColors[type]?.bg || '#e5e7eb', // fallback: gray-200
+    color: color || defaultColors[type]?.color || '#000000',     // fallback: black
   };
 
   return (
-    <span className={`inline-block px-2 py-1 rounded-full text-xs font-bold font-mono ${colors[type] || 'bg-gray-300 text-black'}`}>
+    <span
+      style={style}
+      className="inline-block px-2 py-1 rounded-full text-xs font-bold font-mono"
+    >
       {type}
     </span>
   );
 };
-
-<MethodPill type="POST" /> and <MethodPill type="GET" /> are supported.
