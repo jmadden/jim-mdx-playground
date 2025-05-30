@@ -39,3 +39,5 @@ ReadMe has a *ton* of ways to make your docs the envy of any <Glossary>parliamen
 We're excited you're here! :blue_heart:
 
 ![This won't be fun to clean up...](https://owlbert.io/images/popper.gif)
+
+<MethodPill type="POST" /> and <MethodPill type="GET" /> are supported.
