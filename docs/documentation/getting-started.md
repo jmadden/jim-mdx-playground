@@ -40,6 +40,7 @@ We're excited you're here! :blue_heart:
 
 ![This won't be fun to clean up...](https://owlbert.io/images/popper.gif)
 
-<MethodPill type="POST" /> and <MethodPill type="GET" /> are supported.
-
 Defaults: <MethodPill type="POST" /> | <MethodPill type="GET" /> | <MethodPill type="PUT" /> | <MethodPill type="Delete" />
+Custom background & text: <MethodPill type="SYNC" bg="#8b5cf6" color="#ffffff" />
+Custom roundness: <MethodPill type="GET" radius="6px" />
+Completely custom: <MethodPill type="MAGIC" bg="#333" color="#fff" radius="0.5rem" />
