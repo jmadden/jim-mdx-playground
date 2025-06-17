@@ -14,3 +14,7 @@ metadata:
 <br />
 
 <ComplexDiagram title="System Architecture Overview" />
+
+<br />
+
+<ApiTable header="User List" endpoint="https://jsonplaceholder.typicode.com/users" columns={['id', 'name', 'email', 'company']} />
